@@ -10,6 +10,7 @@
 
 using namespace std;
 
+// Cambiar cantidad si quieres visualizar más resultados
 void mostrarResultados(const vector<SecuenciaViral>& resultados, int cantidad){
     int limite = min(cantidad, static_cast<int>(resultados.size()));
 
@@ -27,11 +28,8 @@ void mostrarResultados(const vector<SecuenciaViral>& resultados, int cantidad){
 }
 
 void menu() {
-
     Dataset dataset;
-
-    string archivo = "C:/Datasets/sars_cov2_100000.tsv";
-
+    string archivo = "C:/Datasets/sars_cov2_100000.tsv"; //Añádir la dirección del dataset
     cout << "Cargando dataset...\n";
 
     if (!dataset.cargarArchivo(archivo)) {
@@ -133,7 +131,7 @@ void menu() {
             cout << "\nPrimeros registros:\n";
             mostrarResultados(datos, 10);
         }
-    } while (opcion != 0);
+    } while(opcion != 0);
     cout << "\nPrograma terminado.\n";
 }
 
