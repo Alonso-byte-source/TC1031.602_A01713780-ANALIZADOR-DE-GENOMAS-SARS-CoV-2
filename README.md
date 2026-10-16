@@ -59,15 +59,23 @@ https://www.ncbi.nlm.nih.gov/datasets/
 ## Estructura del proyecto
 
 ```text
-Proyecto/
+TC1031.602_A01713780-ANALIZADOR-DE-GENOMAS-SARS-CoV-2/
 │
 ├── main.cpp
-│
 ├── SecuenciaViral.h
 ├── Dataset.h
 ├── Filtros.h
 ├── Busqueda.h
 ├── Ordenamiento.h
-│
-└── data/
-    └── sars_cov2_100000.tsv
+├── sars_cov2_100000.tsv
+└── README.md
+```
+- main.cpp: contiene la función principal y el menú de interacción con el usuario.
+- SecuenciaViral.h: define la clase que representa cada secuencia viral.
+- Dataset.h: implementa la carga y visualización de los registros del archivo TSV.
+- Filtros.h: contiene los métodos para filtrar secuencias por sus atributos.
+- Busqueda.h: implementa los algoritmos de búsqueda por accession.
+- Ordenamiento.h: implementa el algoritmo Merge Sort para ordenar las secuencias por longitud.
+- sars_cov2_100000.tsv: contiene el subconjunto de datos utilizado para ejecutar y probar el programa.
+- README.md: documenta el proyecto, su funcionamiento y las instrucciones de uso.
+
