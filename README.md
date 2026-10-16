@@ -79,3 +79,24 @@ TC1031.602_A01713780-ANALIZADOR-DE-GENOMAS-SARS-CoV-2/
 - sars_cov2_100000.tsv: contiene el subconjunto de datos utilizado para ejecutar y probar el programa.
 - README.md: documenta el proyecto, su funcionamiento y las instrucciones de uso.
 
+---
+
+## Estructura del proyecto
+
+El programa permite realizar las siguientes operaciones:
+
+1. Mostrar una cantidad determinada de registros del conjunto de datos.
+2. Filtrar secuencias por linaje.
+3. Filtrar secuencias por ubicación geográfica.
+4. Filtrar secuencias por un intervalo de longitud.
+5. Buscar una secuencia por su identificador accession mediante búsqueda secuencial.
+6. Ordenar las secuencias por longitud utilizando Merge Sort.
+
+Los filtros generan un vector con las secuencias que cumplen la condición especificada. La operación de ordenamiento trabaja sobre una copia del vector original, por lo que no modifica el orden de los registros almacenados en el objeto Dataset
+
+---
+
+## Complejidad de los algoritmos
+
+La complejidad temporal describe cómo crece el tiempo de ejecución de un algoritmo conforme aumenta la cantidad de registros, representada por (n). La complejidad espacial describe la memoria adicional que requiere.
+
