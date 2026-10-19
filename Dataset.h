@@ -7,94 +7,120 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <stdexcept>
 
 #include "SecuenciaViral.h"
+#include "Ordenamiento.h"
+#include "ArbolAccession.h"
 
 class Dataset{
     private:
         std::vector<SecuenciaViral> secuencias;
+        std::vector<int> ordenAccession;
+        ArbolAccession arbol;
+        int lineasOmitidas;
+        void construirIndices();
     public:
+        Dataset() : lineasOmitidas(0) {}
         bool cargarArchivo(const std::string&);
-        void mostrarRegistros(int);
-        int cantidadRegistros();
+        void mostrarRegistros(int) const;
+        int cantidadRegistros() const;
+        int getLineasOmitidas() const;
         const std::vector<SecuenciaViral>& getSecuencias() const;
+        const std::vector<int>& getOrdenAccession() const;
+        const ArbolAccession& getArbol() const;
 };
 
-
-bool Dataset::cargarArchivo(const std::string& nombreArchivo){
+inline bool Dataset::cargarArchivo(const std::string& nombreArchivo){
     std::ifstream archivo(nombreArchivo);
-
     if(!archivo.is_open()){
-        std::cout << "No se puedo abrir el archivo.\n";
+        std::cout << "No se pudo abrir el archivo: " << nombreArchivo << "\n";
         return false;
     }
 
+    secuencias.clear();
+    lineasOmitidas = 0;
+
     std::string linea;
 
-    std::getline(archivo, linea); 
+    std::getline(archivo, linea);
 
-    while (getline(archivo, linea)){
+    while(std::getline(archivo, linea)){
+        if(!linea.empty() && linea.back() == '\r'){
+            linea.pop_back();
+        }
+
         std::stringstream ss(linea);
         std::string celda;
         std::vector<std::string> campos;
 
-        while(getline(ss, celda, '\t')){
-            campos.push_back(celda); 
+        while(std::getline(ss, celda, '\t')){
+            campos.push_back(celda);
         }
 
         if(campos.size() != 8){
+            lineasOmitidas++;
             continue;
         }
-        SecuenciaViral secuencia(
+
+        int longitud;
+        char caracterExtra;
+
+        std::istringstream conversion(campos[5]);
+
+        if (!(conversion >> longitud) || (conversion >> caracterExtra)) {
+            lineasOmitidas++;
+            continue;
+        }
+
+        secuencias.push_back(SecuenciaViral(
             campos[0],
             campos[1],
             campos[2],
             campos[3],
             campos[4],
-            std::stoi(campos[5]),
+            longitud,
             campos[6],
             campos[7]
-        );
-        secuencias.push_back(secuencia);
+        ));
     }
     archivo.close();
+
+    construirIndices();
     return true;
 }
 
-void Dataset::mostrarRegistros(int cantidad){
-    int limite = std::min(cantidad, (int)secuencias.size());
+inline void Dataset::construirIndices(){
+    ordenAccession = Ordenamiento::indicesPorAccesion(secuencias);
+    arbol.construirBalanceado(secuencias, ordenAccession);
+}
+
+inline void Dataset::mostrarRegistros(int cantidad) const{
+    int limite = std::min(cantidad, static_cast<int>(secuencias.size()));
     for(int i = 0; i < limite; i++){
-        std::cout << "\nRegistro" << i + 1 << "\n";
-
-        std::cout << "Accession: " 
-                  << secuencias[i].getAccesion() << "\n";
-        std::cout << "Linaje: " 
-                  << secuencias[i].getLinaje() << "\n";
-        std::cout << "Ubicacion: " 
-                  << secuencias[i].getUbicacion() << "\n";
-        std::cout << "Fecha de muestra: " 
-                  << secuencias[i].getFechaMuestra() << "\n";
-        std::cout << "Huesped: " 
-                  << secuencias[i].getHuesped() << "\n";
-        std::cout << "Longitud: " 
-                  << secuencias[i].getLongitud() << "\n";
-        std::cout << "Completitud: " 
-                  << secuencias[i].getCompletitud() << "\n";
-        std::cout << "Fecha de liberacion: " 
-                  << secuencias[i].getFechaLiberacion() << "\n";
+        std::cout << "\nRegistro " << i + 1 << "\n";
+        secuencias[i].imprimir(std::cout);
     }
-
 }
 
-int Dataset::cantidadRegistros(){
-    return secuencias.size();
+inline int Dataset::cantidadRegistros() const{
+    return static_cast<int>(secuencias.size());
 }
 
-const std::vector<SecuenciaViral>& Dataset::getSecuencias() const {
+inline int Dataset::getLineasOmitidas() const{
+    return lineasOmitidas;
+}
+
+inline const std::vector<SecuenciaViral>& Dataset::getSecuencias() const {
     return secuencias;
 }
 
+inline const std::vector<int>& Dataset::getOrdenAccession() const {
+    return ordenAccession;
+}
 
-
+inline const ArbolAccession& Dataset::getArbol() const {
+    return arbol;
+}
 
 #endif
